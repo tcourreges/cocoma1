@@ -10,3 +10,19 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+
+.classpath
+.project
+.settings/
+README.md
+bin/
+build.xml
+conf/
+doc/
+eismassimconfig.xml
+logging.properties
+osm/
+percepts.txt
+readme.txt
+scenario1.jcm
