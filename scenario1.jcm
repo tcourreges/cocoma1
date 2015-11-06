@@ -13,9 +13,7 @@ mas scenario1 {
 	}
 	
 	workspace market_place {
-    	artifact coord: env.CoordArtifact() {
-    		focused-by: vehicle1, vehicle2, vehicle3, vehicle4
-    	}
+		agents: vehicle1, vehicle2, vehicle3, vehicle4
     }
 	
 	asl-path: src/pucrs/agentcontest2015/agt, src/env
