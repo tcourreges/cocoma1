@@ -1,0 +1,23 @@
+mas scenario1 {
+	agent vehicle1: vehicle.asl {
+		goals: register_EIS("connectionA1")
+	}
+	agent vehicle2: vehicle.asl {
+		goals: register_EIS("connectionA2")
+	}
+	agent vehicle3: vehicle.asl {
+		goals: register_EIS("connectionA3")
+	}
+	agent vehicle4: vehicle.asl {
+		goals: register_EIS("connectionA4")
+	}
+	
+	workspace market_place {
+    	artifact coord: env.CoordArtifact() {
+    		focused-by: vehicle1, vehicle2, vehicle3, vehicle4
+    	}
+    }
+	
+	asl-path: src/pucrs/agentcontest2015/agt
+	
+}

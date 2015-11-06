@@ -25,7 +25,6 @@ logging.properties
 osm/
 percepts.txt
 readme.txt
-scenario1.jcm
 cache/
 graphs/
 log/
