@@ -10,5 +10,6 @@
    
 +pricedJob(JobId, Storage, A,B,C, List)
 <- 
-    .print("received job ", JobId," : ",List)
+    .print("received job ", JobId," : ",List);
+    bid(150);
 .

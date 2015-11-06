@@ -7,6 +7,7 @@ import cartago.*;
 public class CoordArtifact extends Artifact {
 
 	String chosenAgent = "no_agent";
+	int count = 0;
 
 	@OPERATION
 	public void init() {
@@ -38,6 +39,8 @@ public class CoordArtifact extends Artifact {
 		if (!getObsProperty("running").booleanValue())
 			failed("auction not started");
 
+		count++;
+		
 		ObsProperty opCurrentValue = getObsProperty("best_bid");
 		if (bidValue < opCurrentValue.doubleValue()) { // the bid is better than
 														// the previous
@@ -47,5 +50,16 @@ public class CoordArtifact extends Artifact {
 		}
 		System.out.println("Received bid " + bidValue + " from "
 				+ getOpUserName());
+		
+		if (count>=4) {
+			count = 0;
+			stop();
+			System.out.println("All bids have been recieved. The winner is " + getObsProperty("winner") + " with " + getObsProperty("best_bid"));
+		}
+	}
+	
+	@OPERATION
+	public void transmitInformation(String string) {
+		System.out.println(string);
 	}
 }

@@ -18,6 +18,6 @@ mas scenario1 {
     	}
     }
 	
-	asl-path: src/pucrs/agentcontest2015/agt
+	asl-path: src/pucrs/agentcontest2015/agt, src/env
 	
 }
