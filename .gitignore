@@ -31,3 +31,4 @@ graphs/
 log/
 xmls/
 *.raw
+backup/
