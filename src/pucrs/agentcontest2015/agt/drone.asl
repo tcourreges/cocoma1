@@ -11,8 +11,9 @@
 
 +pricedJob(JobId, Storage, A,B,C, List)
 <- 
-    .print("received job ", JobId," : ",List);
-    !start("JobId","salut");
+    .print("received job ", JobId," : ", List);
+    .nth(0, List, Item1);
+    !start(JobId,Item1);
 .
 
 //bidding
