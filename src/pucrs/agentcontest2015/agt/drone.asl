@@ -21,11 +21,15 @@
       focus(ArtId);
       .broadcast(achieve,focus(Id));
       start(P)[artifact_id(ArtId)];
-      .at("now + 5 seconds", {+!decide(Id)}).
+      //.at("now + 5 seconds", {+!decide(Id)})
+.
       
 +!decide(Id)
    <- .print("stopping");
 stop[artifact_name(Id)].
+
++task(D)[artifact_id(AId)] : running(true)[artifact_id(AId)] 
+   <- bid(math.random * 100 + 10)[artifact_id(AId)].
 
 +winner(W)[artifact_id(AId)] : W \== no_winner
    <- ?task(S)[artifact_id(AId)];
