@@ -20,7 +20,7 @@
 	.concat(Temp1, [node(X,Y,explore)], Temp2);
 	+todoList(Temp2);
 
-	.print(Temp2);
+	//.print(Temp2);
     }
 
     +again(true);
@@ -33,7 +33,7 @@
 		//.print(Z);
 		if( Z==explore ) {
 			.abolish(again(_)); +again(true);
-			.print(X);
+			//.print(X);
 			?product(X, N, List2);
 
 			+assemble(false);
@@ -55,8 +55,8 @@
 
 			?todoList(Temp1); .abolish(todoList(_));
 
-			?assemble(Toto); .print(Toto);
-			if(Toto==true) {.concat(Temp1, [node(X,Y,assemble)], Temp2); +todoList(Temp2);}
+			?assemble(Assemble); //.print(Toto);
+			if(Assemble==true) {.concat(Temp1, [node(X,Y,assemble)], Temp2); +todoList(Temp2);}
 			else {.concat(Temp1, [node(X,Y,buy)], Temp2); +todoList(Temp2);}
 			.abolish(assemble(_));
 		}
@@ -68,6 +68,7 @@
 	    }
 
     }
+    //?todoList(Display); .print(Display);
 .   
 
 +charge(C) : C < 100 & not .desire(charge) <- !charge.
