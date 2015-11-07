@@ -11,30 +11,63 @@
 
 +pricedJob(JobId, Storage, A,B,C, List)
 <- 
-    .print("received job ", JobId," : ", List);
-    .nth(0, List, Item1);
-    !start(JobId,Item1);
-.
+    +todoList([]);
 
-//bidding
-+!start(Id,P) 
-   <- makeArtifact(Id, "env.CoordArtifact", [], ArtId);
-      focus(ArtId);
-      .broadcast(achieve,focus(Id));
-      start(P)[artifact_id(ArtId)];
-      //.at("now + 5 seconds", {+!decide(Id)})
-.
-      
-+!decide(Id)
-   <- .print("stopping");
-stop[artifact_name(Id)].
+    .print("received job ", JobId," : ",List);
+    for ( .member(item(X,Y), List) ) {
+	?todoList(Temp1); .abolish(todoList(_));
+	
+	.concat(Temp1, [node(X,Y,explore)], Temp2);
+	+todoList(Temp2);
 
-+task(D)[artifact_id(AId)] : running(true)[artifact_id(AId)] 
-   <- bid(math.random * 100 + 10)[artifact_id(AId)].
+	.print(Temp2);
+    }
 
-+winner(W)[artifact_id(AId)] : W \== no_winner
-   <- ?task(S)[artifact_id(AId)];
-      ?best_bid(V)[artifact_id(AId)];
-      .print("Winner for ", S, " is ",W," with ", V).         
+    +again(true);
+    while(again(AAA) & AAA=true) {
+    	    ?todoList(Step); .abolish(todoList(_)); +todoList([]);
+
+            .abolish(again(_)); +again(false);
+	    
+	    for( .member( node(X,Y,Z), Step )) {
+		//.print(Z);
+		if( Z==explore ) {
+			.abolish(again(_)); +again(true);
+			.print(X);
+			?product(X, N, List2);
+
+			+assemble(false);
+
+			for( .member( consumed(XX,YY), List2 ) ) {
+				.abolish(assemble(_)); +assemble(true);
+				//.print(XX);
+				?todoList(Temp1); .abolish(todoList(_));
+				.concat(Temp1, [node(XX,YY,explore)], Temp2);
+				+todoList(Temp2);
+			}
+
+			for( .member( tools(XXX,YYY), List2 ) ) {
+				//.print(XXX);
+				?todoList(Temp1); .abolish(todoList(_));
+				.concat(Temp1, [node(XXX,YYY,explore)], Temp2);
+				+todoList(Temp2);
+			}
+
+			?todoList(Temp1); .abolish(todoList(_));
+
+			?assemble(Toto); .print(Toto);
+			if(Toto==true) {.concat(Temp1, [node(X,Y,assemble)], Temp2); +todoList(Temp2);}
+			else {.concat(Temp1, [node(X,Y,buy)], Temp2); +todoList(Temp2);}
+			.abolish(assemble(_));
+		}
+		else {
+			?todoList(Temp1); .abolish(todoList(_));
+			.concat(Temp1, [node(X,Y,Z)], Temp2);
+			+todoList(Temp2);
+		}
+	    }
+
+    }
+.   
 
 +charge(C) : C < 100 & not .desire(charge) <- !charge.
