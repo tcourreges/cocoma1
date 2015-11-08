@@ -7,7 +7,7 @@ import cartago.*;
 public class CoordArtifact extends Artifact {
 
 	String chosenAgent = "no_agent";
-	int count = 0;
+	String king = "no_agent";
 
 	@OPERATION
 	public void init() {
@@ -15,15 +15,20 @@ public class CoordArtifact extends Artifact {
 		defineObsProperty("running", false);
 		defineObsProperty("task", "no_task");
 		defineObsProperty("best_bid", Double.MAX_VALUE);
+		defineObsProperty("index", 0);
+		defineObsProperty("answer_count", 0);
 		defineObsProperty("winner", new Atom(chosenAgent));
+		defineObsProperty("king", new Atom(king));
 	}
 
 	@OPERATION
-	public void start(String task) {
+	public void start(String task, int ind) {
 		if (getObsProperty("running").booleanValue())
 			failed("protocol already running");
+		getObsProperty("index").updateValue(ind+1);
 		getObsProperty("running").updateValue(true);
 		getObsProperty("task").updateValue(task);
+		getObsProperty("answer_count").updateValue(0);
 	}
 
 	@OPERATION
@@ -35,11 +40,11 @@ public class CoordArtifact extends Artifact {
 	}
 
 	@OPERATION
-	public void bid(double bidValue) {
+	public void bid(double bidValue, int count) {
 		if (!getObsProperty("running").booleanValue())
 			failed("auction not started");
 
-		count++;
+		getObsProperty("answer_count").updateValue(count+1);
 		
 		ObsProperty opCurrentValue = getObsProperty("best_bid");
 		if (bidValue < opCurrentValue.doubleValue()) { // the bid is better than
@@ -51,15 +56,24 @@ public class CoordArtifact extends Artifact {
 		System.out.println("Received bid " + bidValue + " from "
 				+ getOpUserName());
 		
-		if (count>=4) {
-			count = 0;
-			stop();
-			System.out.println("All bids have been recieved. The winner is " + getObsProperty("winner") + " with " + getObsProperty("best_bid"));
-		}
 	}
 	
 	@OPERATION
 	public void transmitInformation(String string) {
 		System.out.println(string);
+	}
+	
+	@OPERATION
+	public void askPermission(){
+		if (king.equals("no_agent")){
+			king = getOpUserName();
+		}
+		getObsProperty("king").updateValue(new Atom(king));
+	}
+	
+	@OPERATION
+	public void releasePermission(){
+		king = "no_agent";
+		getObsProperty("king").updateValue(new Atom(king));
 	}
 }
