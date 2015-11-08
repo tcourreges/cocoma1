@@ -31,7 +31,7 @@
 	if (idling) {
 		bid(Speed)[artifact_id(AId)];
 	} else {
-		.print("Currently idling, no bid, my speed is :", Speed);
+		.print("Currently busy, bidding 0, my speed is :", Speed);
 		bid(0)[artifact_id(AId)];
 	}
 .
@@ -153,11 +153,16 @@
 		    }
 		    ?todoList(Bcast); 
 		    .print(Bcast);
-		    +idling;
-		    +index(1);
 		    .broadcast(tell,todoList(Bcast));
-		    .broadcast(tell,idling);
+
+		    .broadcast(tell, doingAuction(_));
+
+		    +index(1);
 		    .broadcast(tell,index(1));	
+		    +idling;
+		    .broadcast(tell,idling);
+
+		    .broadcast(untell,doingAuction(_));
 		}
 .   
 
