@@ -14,9 +14,9 @@
 +idling : todoList(List)
 <-
 	.print("currently idling");
-	?index(i);
-	.nth(solve(i), List, currentItem );
-	/* .printf("Going to assemble ", currentItem);
+	/* ?index(i);
+	 .nth(solve(i), List, currentItem );
+	.printf("Going to assemble ", currentItem);
 	+needToBuy(currentItem, 1);
 	-idling;*/
 .
@@ -123,10 +123,12 @@
 
 		    }
 		    ?todoList(Bcast); 
+		    .print(Bcast);
+		    +idling;
+		    +index(1);
 		    .broadcast(tell,todoList(Bcast));
 		    .broadcast(tell,idling);
 		    .broadcast(tell,index(1));	
-		    .print(Bcast);
 		}
 .   
 
