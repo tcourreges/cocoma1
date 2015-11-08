@@ -2,6 +2,15 @@
 { include("common-plans.asl") }
 { include("actions.asl") }
 
++!focus(A) 
+   <- lookupArtifact(A,ToolId); 
+      focus(ToolId).
+
++task(D)[artifact_id(AId)] : running(true)[artifact_id(AId)] 
+   <- bid(math.random * 100 + 10)[artifact_id(AId)].
+
++winner(W) : .my_name(W) <- .print("I Won!").
+
 // register this agent into the MAPC server (simulator) using a personal interface artifact
 +!register_EIS(E)
 <-  
@@ -105,7 +114,8 @@
 			    }
 
 		    }
-		    ?todoList(Bcast); .broadcast(tell,todoList(Bcast));
-		    print(Bcast);
+		    ?todoList(Bcast); 
+		    .broadcast(tell,todoList(Bcast));
+		    .print(Bcast);
 		}
 	.   

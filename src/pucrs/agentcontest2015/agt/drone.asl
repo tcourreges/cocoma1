@@ -1,6 +1,5 @@
 // specific plans for drones
 
-//!start("a2","flight_ticket(athens,paris,18/12/2015)").
 !run.
 
 +!run
