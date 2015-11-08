@@ -15,7 +15,7 @@
 	} else {
 		.broadcast(tell, doingAuction);
 		+doingAuction;
-		.print("starting auction");
+		.print("starting auction ", Id2);
 		//.nth(0, List, CurrentAction); // need to change 0 to index
 
 		.term2string(Id,Id2);
@@ -172,7 +172,8 @@
 		    .print(Bcast);
 		    .broadcast(tell,todoList(Bcast));
 
-		    .broadcast(tell, doingAuction(_));
+		    .broadcast(tell, doingAuction);
+		    +doingAuction;
 
 		    +index(1);
 		    .broadcast(tell,index(1));	
@@ -180,6 +181,7 @@
 		    .broadcast(tell,idling);
 
 		    .broadcast(untell,doingAuction(_));
+		    -doingAuction(_);
 		}
 .   
 
