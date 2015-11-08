@@ -6,18 +6,6 @@
    <- lookupArtifact(A,ToolId); 
       focus(ToolId).
 
-+task(D)[artifact_id(AId)] : running(true)[artifact_id(AId)] 
-<- 
-	?role(Type, Speed, Charge, Load, Items);
-	if (idling) {
-		bid(Speed)[artifact_id(AId)];
-	} else {
-		bid(0)[artifact_id(AId)];
-	}
-.
-
-+winner(W) : .my_name(W) <- .print("I Won!").
-
 +idling : todoList(List)
 <-
 	.print("currently idling");
@@ -31,6 +19,24 @@
 	}
 .
 
++winner(W) : .my_name(W)
+<-
+	.print("I Won!");
+	.broadcast(untell,doingAuction(_));
+.
+
++task(D)[artifact_id(AId)] : running(true)[artifact_id(AId)] 
+<- 
+	?role(Type, Speed, Charge, Load, Items);
+	if (idling) {
+		bid(Speed)[artifact_id(AId)];
+	} else {
+		.print("Currently idling, no bid, my speed is :", Speed);
+		bid(0)[artifact_id(AId)];
+	}
+.
+
+
 +!startArtifact(Id, P)
 <-
 	makeArtifact(Id, "env.CoordArtifact", [], ArtId);
@@ -42,7 +48,7 @@
 +needToAssemble(material,assist,master)
 <- 
 	//cannot assemble more than one item at once
-	//!goto(jesaispas)
+	!goto(workshop1,0);
 	if (assist){
 		!assist_assemble(master);
 		.print("I assisted ", master ,"to build ", material, ".");
@@ -50,17 +56,22 @@
 	else{
 		!assemble(material);
 		.print("I assembled ", material, ".");
-		?index(i);
-		//.broadcast(tell,index(i+1));
+		?index(I);
+		.broadcast(untell,index(_));
+		.broadcast(tell,index(I+1));
 	}
-	//une fois done, j'idle
+	//once done, idle
 	+idling;
 .
 
 +needToBuy(item, quantity)
 <-
 	.print("Going to buy ", quantity, " ", item);
+	?index(I);
+	.broadcast(untell, index(_));
+	.broadcast(tell, index(I+1));
 	!buy_item(item,quantity);
+	//once done, idle
 	+idling;
 .
 
