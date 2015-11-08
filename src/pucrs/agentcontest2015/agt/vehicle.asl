@@ -2,31 +2,48 @@
 { include("common-plans.asl") }
 { include("actions.asl") }
 
-// register this agent into the MAPC server (simulator) using a personal interface artifact
-+!register_EIS(E)
-<-  
-    .my_name(Me);
-    .concat("perso_art_",Me,AName);
-    makeArtifact(AName,"pucrs.agentcontest2015.env.EISArtifact",[],AId);
-    focus(AId);
-    registerEISEntity(E);
-. 
++!focus(A) 
+   <- lookupArtifact(A,ToolId); 
+      focus(ToolId).
 
-+!register_freeconn
-<-	
-    .print("Registering...");
-	registerFreeconn;
++task(D)[artifact_id(AId)] : running(true)[artifact_id(AId)] 
+   <- bid(math.random * 100 + 10)[artifact_id(AId)].
+
++winner(W) : .my_name(W) <- .print("I Won!").
+
++idling : todoList(List)
+<-
+	.print("currently idling");
+	?index(i);
+	.nth(solve(i), List, currentItem );
+	/* .printf("Going to assemble ", currentItem);
+	+needToBuy(currentItem, 1);
+	-idling;*/
 .
 
-// plan to react to the signal role/5 (from EISArtifact)
-// it loads the source code for the agent's role in the simulation
-+role(Role, Speed, LoadCap, BatteryCap, Tools)
++needToAssemble(material,assist,master)
+<- 
+	//cannot assemble more than one item at once
+	//!goto(jesaispas)
+	if (assist){
+		!assist_assemble(master);
+		.print("I assisted ", master ,"to build ", material, ".");
+	}
+	else{
+		!assemble(material);
+		.print("I assembled ", material, ".");
+		?index(i);
+		//.broadcast(tell,index(i+1));
+	}
+	//une fois done, j'idle
+	+idling;
+.
+
++needToBuy(item, quantity)
 <-
-	.print("Got role: ", Role);
-	!new_round;
-	.lower_case(Role, File);
-	.concat(File, ".asl", FileExt);
-	.include(FileExt);
+	.print("Going to buy ", quantity, " ", item);
+	!buy_item(item,quantity);
+	+idling;
 .
 
 +todoList(_)
@@ -35,7 +52,7 @@
 +pricedJob(JobId, Storage, A,B,C, List)
 <- 
 	if(processingTodo(_)) {
-		.print("someone processing TodoList already");
+		.print("someone already processing TodoList");
 	}
 	else {
 		.print("first to process TodoList");
@@ -105,7 +122,38 @@
 			    }
 
 		    }
-		    ?todoList(Bcast); .broadcast(tell,todoList(Bcast));
-		    print(Bcast);
+		    ?todoList(Bcast); 
+		    .broadcast(tell,todoList(Bcast));
+		    .broadcast(tell,idling);
+		    .broadcast(tell,index(1));	
+		    .print(Bcast);
 		}
-	.   
+.   
+
+	// register this agent into the MAPC server (simulator) using a personal interface artifact
++!register_EIS(E)
+<-  
+    .my_name(Me);
+    .concat("perso_art_",Me,AName);
+    makeArtifact(AName,"pucrs.agentcontest2015.env.EISArtifact",[],AId);
+    focus(AId);
+    registerEISEntity(E);
+. 
+
++!register_freeconn
+<-	
+    .print("Registering...");
+	registerFreeconn;
+.
+
+// plan to react to the signal role/5 (from EISArtifact)
+// it loads the source code for the agent's role in the simulation
++role(Role, Speed, LoadCap, BatteryCap, Tools)
+<-
+	.print("Got role: ", Role);
+	!new_round;
+	.lower_case(Role, File);
+	.concat(File, ".asl", FileExt);
+	.include(FileExt);
+.
+	
