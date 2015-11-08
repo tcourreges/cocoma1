@@ -25,6 +25,8 @@
 	.print("I Won!");
 	.broadcast(untell,doingAuction(_));
 	-doingAuction(_);
+	.broadcast(untell,idling);
+	.broadcast(tell,idling);
 .
 
 +task(D)[artifact_id(AId)] : running(true)[artifact_id(AId)] 
@@ -33,7 +35,6 @@
 	if (idling) {
 		bid(Speed)[artifact_id(AId)];
 	} else {
-		.print("Currently busy, bidding 0, my speed is :", Speed);
 		bid(0)[artifact_id(AId)];
 	}
 .
