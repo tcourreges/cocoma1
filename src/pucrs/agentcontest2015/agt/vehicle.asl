@@ -7,18 +7,36 @@
       focus(ToolId).
 
 +task(D)[artifact_id(AId)] : running(true)[artifact_id(AId)] 
-   <- bid(math.random * 100 + 10)[artifact_id(AId)].
+<- 
+	?role(Type, Speed, Charge, Load, Items);
+	if (idling) {
+		bid(Speed)[artifact_id(AId)];
+	} else {
+		bid(0)[artifact_id(AId)];
+	}
+.
 
 +winner(W) : .my_name(W) <- .print("I Won!").
 
 +idling : todoList(List)
 <-
 	.print("currently idling");
-	/* ?index(i);
-	 .nth(solve(i), List, currentItem );
-	.printf("Going to assemble ", currentItem);
-	+needToBuy(currentItem, 1);
-	-idling;*/
+	if(doingAuction(_)) {
+		.print("auction already being done");
+	} else {
+		.broadcast(tell, doingAuction(_));
+		.print("starting auction");
+		.nth(0, List, CurrentAction); // need to change 0 to index
+		!startArtifact("Job", currentAction);
+	}
+.
+
++!startArtifact(Id, P)
+<-
+	makeArtifact(Id, "env.CoordArtifact", [], ArtId);
+	focus(ArtId);
+	.broadcast(achieve, focus(Id));
+	start(P)[artifact_id(ArtId)];
 .
 
 +needToAssemble(material,assist,master)
