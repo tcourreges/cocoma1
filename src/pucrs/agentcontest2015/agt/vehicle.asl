@@ -8,23 +8,37 @@
 
 +idling : todoList(List)
 <-
-	.print("currently idling");
+ 	?index(Id);
+	.print("currently idling -> trying to create id ", Id);
 	if(doingAuction(_)) {
-		.print("auction already being done");
+		.print("auction running");
 	} else {
-		.broadcast(tell, doingAuction(_));
-		+doingAuction(_);
+		.broadcast(tell, doingAuction);
+		+doingAuction;
 		.print("starting auction");
-		.nth(0, List, CurrentAction); // need to change 0 to index
-		!startArtifact("Job", currentAction);
+		//.nth(0, List, CurrentAction); // need to change 0 to index
+
+		.term2string(Id,Id2);
+		!startArtifact(Id2, Id2);
+		
 	}
 .
 
 +winner(W) : .my_name(W)
 <-
 	.print("I Won!");
-	.broadcast(untell,doingAuction(_));
-	-doingAuction(_);
+	.broadcast(untell,doingAuction);
+
+	-idling(_);
+
+	?index(I);
+	-index(_); +index(I+1);
+	.broadcast(untell, index(_));
+	.broadcast(tell, index(I+1));
+
+	.print(I+1);
+
+	-doingAuction;
 	.broadcast(untell,idling);
 	.broadcast(tell,idling);
 .
