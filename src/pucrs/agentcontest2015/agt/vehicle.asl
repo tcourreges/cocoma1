@@ -13,6 +13,7 @@
 		.print("auction already being done");
 	} else {
 		.broadcast(tell, doingAuction(_));
+		+doingAuction(_);
 		.print("starting auction");
 		.nth(0, List, CurrentAction); // need to change 0 to index
 		!startArtifact("Job", currentAction);
@@ -23,6 +24,7 @@
 <-
 	.print("I Won!");
 	.broadcast(untell,doingAuction(_));
+	-doingAuction(_);
 .
 
 +task(D)[artifact_id(AId)] : running(true)[artifact_id(AId)] 
