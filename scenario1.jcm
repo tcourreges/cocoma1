@@ -12,7 +12,7 @@ mas scenario1 {
 		goals: register_EIS("connectionA4")
 	}
 	
-	workspace market_place {
+	workspace team {
 		agents: vehicle1, vehicle2, vehicle3, vehicle4
 		artifact coordinator : env.CoordArtifact(){
 				focused-by : vehicle1, vehicle2, vehicle3, vehicle4

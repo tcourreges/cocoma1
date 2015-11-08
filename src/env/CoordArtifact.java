@@ -74,6 +74,5 @@ public class CoordArtifact extends Artifact {
 	@OPERATION
 	public void releasePermission(){
 		king = "no_agent";
-		getObsProperty("king").updateValue(new Atom(king));
 	}
 }

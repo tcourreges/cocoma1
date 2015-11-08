@@ -3,9 +3,10 @@
 { include("actions.asl") }
 
 
-+!idle : task(D) & running(true)
++!doBid : task(D) & running(true)
 <-
 	//bid
+	.print("Currently bid ");
 	?role(Type, Speed, Charge, Load, Items);
 	if (idling) {
 		bid(Speed);
@@ -15,36 +16,45 @@
 	}
 .
 
-+!idle : running(false) & king(K) & .my_name(K)
+
++idling : running(false)
+<-
+	.print("asking permission for auction start");
+	ask_permission;
+	!start_auction;
+.
+
++!start_auction : king(K) & .my_name(K)
 <-
 	?index(I);
-	.print("Currently idling with no auction in progress, starting it for job number ", I+1);
+	.print("Starting for job number ", I+1);
 	start(I+1);
-	
-	//bid
-	?role(Type, Speed, Charge, Load, Items);
-	if (idling) {
-		bid(Speed);
-	} 
-	else {
-		bid(0);
-	}
+	+idling;
+	!doBid;
 .
 	
-+answer_count(4)
++!start_auction : true
+<-
+	+idling;
+.
+
++answer_count(4) : king(K) & .my_name(K)
 <- 
-	stop
+	stop;
+	release_permission;
 .
 
 +winner(W) : .my_name(W)
 <-
 	?index(I);
-	.print("I Won job with id ", I, "!");
-	.broadcast(achieve, idle);
+	.print("Doing job with index ", I, "!");
+	.broadcast(untell, idling);
+	.broadcast(tell, idling);
+	-idling;
+	.nth(I,todoList,Node);
 .
 
-
-+needToAssemble(material,assist,master)
++!needToAssemble(material,assist,master)
 <- 
 	//cannot assemble more than one item at once
 	!goto(workshop1,0);
@@ -53,33 +63,32 @@
 		.print("I assisted ", master ,"to build ", material, ".");
 	}
 	else{
+		.my_name(Name);
+		!broadcast(achieve,needToAssemble(material, true, Name));
 		!assemble(material);
 		.print("I assembled ", material, ".");
-		?index(I);
-		.broadcast(untell,index(_));
-		.broadcast(tell,index(I+1));
 	}
 	//once done, idle
-	!idle;
+	+idling;
 .
 
-+needToBuy(item, quantity)
++!needToBuy(item, quantity)
 <-
 	.print("Going to buy ", quantity, " ", item);
-	?index(I);
-	.broadcast(untell, index(_));
-	.broadcast(tell, index(I+1));
 	!buy_item(item,quantity);
 	//once done, idle
-	!idle;
+	+idling;
 .
 
-+todoList(_)
-<- -processingTodo(_).
++!get_permission
+<-
+	askPermission;
+.
 
 +pricedJob(JobId, Storage, A,B,C, List)
 <- 
 	askPermission;
+	
 	!build_todo_list;
 .   
 
@@ -140,8 +149,10 @@
     }
     ?todoList(Bcast); 
    	.print("Built the following todolist : ",Bcast);
-    //.broadcast(achieve,idle);		    
-	//!idle;
+   	.broadcast(tell,todoList);
+   	releasePermission;
+    .broadcast(tell,idling);		    
+	+idling;
 .
 
 +!build_todo_list : true
